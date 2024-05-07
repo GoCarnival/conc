@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/GoCarnivalConc/conc/iter"
+	"github.com/GoCarnival/conc/iter"
 
 	"github.com/stretchr/testify/require"
 )

@@ -3,7 +3,7 @@ package conc
 import (
 	"sync"
 
-	"github.com/GoCarnivalConc/conc/panics"
+	"github.com/GoCarnival/conc/panics"
 )
 
 // NewWaitGroup creates a new WaitGroup.

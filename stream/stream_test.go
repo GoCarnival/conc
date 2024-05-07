@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/GoCarnivalConc/conc/stream"
+	"github.com/GoCarnival/conc/stream"
 
 	"github.com/stretchr/testify/require"
 )

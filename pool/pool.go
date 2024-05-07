@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/GoCarnivalConc/conc"
+	"github.com/GoCarnival/conc"
 )
 
 // New creates a new Pool.

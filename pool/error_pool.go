@@ -2,7 +2,7 @@ package pool
 
 import (
 	"context"
-	"github.com/GoCarnivalConc/conc/errors"
+	"github.com/GoCarnival/conc/errors"
 	"sync"
 )
 

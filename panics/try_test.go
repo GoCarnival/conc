@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/GoCarnivalConc/conc/panics"
+	"github.com/GoCarnival/conc/panics"
 
 	"github.com/stretchr/testify/require"
 )
