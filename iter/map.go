@@ -1,7 +1,7 @@
 package iter
 
 import (
-	"github.com/GoCarnivalConc/conc/errors"
+	"github.com/GoCarnival/conc/errors"
 	"sync"
 )
 

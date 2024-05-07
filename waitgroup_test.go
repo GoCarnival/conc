@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/GoCarnivalConc/conc"
+	"github.com/GoCarnival/conc"
 
 	"github.com/stretchr/testify/require"
 )

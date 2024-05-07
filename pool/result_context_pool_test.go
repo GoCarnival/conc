@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/GoCarnivalConc/conc/pool"
+	"github.com/GoCarnival/conc/pool"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

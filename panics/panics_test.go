@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/GoCarnivalConc/conc/panics"
+	"github.com/GoCarnival/conc/panics"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -50,11 +50,11 @@ func ExampleCatcher_callers() {
 		}
 	}
 	// Output:
-	// github.com/GoCarnivalConc/conc/panics.(*Catcher).tryRecover
+	// github.com/GoCarnival/conc/panics.(*Catcher).tryRecover
 	// runtime.gopanic
-	// github.com/GoCarnivalConc/conc/panics_test.ExampleCatcher_callers.func1
-	// github.com/GoCarnivalConc/conc/panics.(*Catcher).Try
-	// github.com/GoCarnivalConc/conc/panics_test.ExampleCatcher_callers
+	// github.com/GoCarnival/conc/panics_test.ExampleCatcher_callers.func1
+	// github.com/GoCarnival/conc/panics.(*Catcher).Try
+	// github.com/GoCarnival/conc/panics_test.ExampleCatcher_callers
 	// testing.runExample
 	// testing.runExamples
 	// testing.(*M).Run

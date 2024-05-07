@@ -42,8 +42,12 @@ func (p *Catcher) Repanic() {
 // Recovered returns the value of the first panic caught by Try, or nil if
 // no calls to Try panicked.
 func (p *Catcher) Recovered() *Recovered {
-	recovered := p.recovered.Load().(Recovered)
-	return &recovered
+	val := p.recovered.Load()
+	if val == nil {
+		return nil
+	}
+	recovered := val.(*Recovered)
+	return recovered
 }
 
 // NewRecovered creates a panics.Recovered from a panic value and a collected

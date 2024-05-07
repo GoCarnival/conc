@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"sync/atomic"
 
-	"github.com/GoCarnivalConc/conc"
+	"github.com/GoCarnival/conc"
 )
 
 // defaultMaxGoroutines returns the default maximum number of
