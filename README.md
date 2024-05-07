@@ -1,5 +1,7 @@
 ![conch](https://user-images.githubusercontent.com/12631702/210295964-785cc63d-d697-420c-99ff-f492eb81dec9.svg)
 
+> go version 1.18
+
 # `conc`: better structured concurrency for go
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/sourcegraph/conc.svg)](https://pkg.go.dev/github.com/sourcegraph/conc)
@@ -12,7 +14,7 @@
 easier and safer.
 
 ```sh
-go get github.com/sourcegraph/conc
+go get github.com/GoCarnival/conc
 ```
 
 # At a glance

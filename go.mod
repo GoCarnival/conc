@@ -1,4 +1,4 @@
-module github.com/GoCarnivalConc/conc
+module github.com/GoCarnival/conc
 
 go 1.18
 
