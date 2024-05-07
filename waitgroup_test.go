@@ -5,23 +5,23 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/sourcegraph/conc"
+	"github.com/GoCarnivalConc/conc"
 
 	"github.com/stretchr/testify/require"
 )
 
 func ExampleWaitGroup() {
-	var count atomic.Int64
+	var count int64
 
 	var wg conc.WaitGroup
 	for i := 0; i < 10; i++ {
 		wg.Go(func() {
-			count.Add(1)
+			atomic.AddInt64(&count, 1)
 		})
 	}
 	wg.Wait()
 
-	fmt.Println(count.Load())
+	fmt.Println(count)
 	// Output:
 	// 10
 }
@@ -50,15 +50,15 @@ func TestWaitGroup(t *testing.T) {
 
 	t.Run("all spawned run", func(t *testing.T) {
 		t.Parallel()
-		var count atomic.Int64
+		var count int64
 		var wg conc.WaitGroup
 		for i := 0; i < 100; i++ {
 			wg.Go(func() {
-				count.Add(1)
+				atomic.AddInt64(&count, 1)
 			})
 		}
 		wg.Wait()
-		require.Equal(t, count.Load(), int64(100))
+		require.Equal(t, count, int64(100))
 	})
 
 	t.Run("panic", func(t *testing.T) {
@@ -100,18 +100,18 @@ func TestWaitGroup(t *testing.T) {
 		t.Run("non-panics run successfully", func(t *testing.T) {
 			t.Parallel()
 			var wg conc.WaitGroup
-			var i atomic.Int64
+			var i int64
 			wg.Go(func() {
-				i.Add(1)
+				atomic.AddInt64(&i, 1)
 			})
 			wg.Go(func() {
 				panic("super bad thing")
 			})
 			wg.Go(func() {
-				i.Add(1)
+				atomic.AddInt64(&i, 1)
 			})
 			require.Panics(t, wg.Wait)
-			require.Equal(t, int64(2), i.Load())
+			require.Equal(t, int64(2), i)
 		})
 
 		t.Run("is caught by waitandrecover", func(t *testing.T) {
@@ -140,19 +140,19 @@ func TestWaitGroup(t *testing.T) {
 		t.Run("nonpanics run successfully with waitandrecover", func(t *testing.T) {
 			t.Parallel()
 			var wg conc.WaitGroup
-			var i atomic.Int64
+			var i int64
 			wg.Go(func() {
-				i.Add(1)
+				atomic.AddInt64(&i, 1)
 			})
 			wg.Go(func() {
 				panic("super bad thing")
 			})
 			wg.Go(func() {
-				i.Add(1)
+				atomic.AddInt64(&i, 1)
 			})
 			p := wg.WaitAndRecover()
 			require.Equal(t, p.Value, "super bad thing")
-			require.Equal(t, int64(2), i.Load())
+			require.Equal(t, int64(2), i)
 		})
 	})
 }

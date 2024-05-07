@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sourcegraph/conc/stream"
+	"github.com/GoCarnivalConc/conc/stream"
 
 	"github.com/stretchr/testify/require"
 )
@@ -57,41 +57,41 @@ func TestStream(t *testing.T) {
 	t.Run("nil callback", func(t *testing.T) {
 		t.Parallel()
 		s := stream.New()
-		var totalCount atomic.Int64
+		var totalCount int64
 		for i := 0; i < 5; i++ {
 			s.Go(func() stream.Callback {
-				totalCount.Add(1)
+				atomic.AddInt64(&totalCount, 1)
 				return nil
 			})
 		}
 		s.Wait()
-		require.Equal(t, int64(5), totalCount.Load())
+		require.Equal(t, int64(5), totalCount)
 	})
 
 	t.Run("max goroutines", func(t *testing.T) {
 		t.Parallel()
 		s := stream.New().WithMaxGoroutines(5)
-		var currentTaskCount atomic.Int64
-		var currentCallbackCount atomic.Int64
+		var currentTaskCount int64
+		var currentCallbackCount int64
 		for i := 0; i < 50; i++ {
 			s.Go(func() stream.Callback {
-				curr := currentTaskCount.Add(1)
+				curr := atomic.AddInt64(&currentTaskCount, 1)
 				if curr > 5 {
 					t.Fatal("too many concurrent tasks being executed")
 				}
-				defer currentTaskCount.Add(-1)
+				defer atomic.AddInt64(&currentTaskCount, -1)
 
 				time.Sleep(time.Millisecond)
 
 				return func() {
-					curr := currentCallbackCount.Add(1)
+					curr := atomic.AddInt64(&currentCallbackCount, 1)
 					if curr > 1 {
 						t.Fatal("too many concurrent callbacks being executed")
 					}
 
 					time.Sleep(time.Millisecond)
 
-					defer currentCallbackCount.Add(-1)
+					defer atomic.AddInt64(&currentCallbackCount, -1)
 				}
 			})
 		}

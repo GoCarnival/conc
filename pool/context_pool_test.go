@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sourcegraph/conc/pool"
+	"github.com/GoCarnivalConc/conc/pool"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -207,22 +207,22 @@ func TestContextPool(t *testing.T) {
 	t.Run("WithCancelOnError and panic", func(t *testing.T) {
 		t.Parallel()
 		p := pool.New().WithContext(bgctx).WithCancelOnError()
-		var cancelledTasks atomic.Int64
+		var cancelledTasks int64
 		p.Go(func(ctx context.Context) error {
 			<-ctx.Done()
-			cancelledTasks.Add(1)
+			atomic.AddInt64(&cancelledTasks, 1)
 			return ctx.Err()
 		})
 		p.Go(func(ctx context.Context) error {
 			<-ctx.Done()
-			cancelledTasks.Add(1)
+			atomic.AddInt64(&cancelledTasks, 1)
 			return ctx.Err()
 		})
 		p.Go(func(ctx context.Context) error {
 			panic("abort!")
 		})
 		assert.Panics(t, func() { _ = p.Wait() })
-		assert.EqualValues(t, 2, cancelledTasks.Load())
+		assert.EqualValues(t, 2, cancelledTasks)
 	})
 
 	t.Run("limit", func(t *testing.T) {
@@ -234,20 +234,20 @@ func TestContextPool(t *testing.T) {
 				t.Parallel()
 				p := pool.New().WithContext(bgctx).WithMaxGoroutines(maxConcurrent)
 
-				var currentConcurrent atomic.Int64
+				var currentConcurrent int64
 				for i := 0; i < 100; i++ {
 					p.Go(func(context.Context) error {
-						cur := currentConcurrent.Add(1)
+						cur := atomic.AddInt64(&currentConcurrent, 1)
 						if cur > int64(maxConcurrent) {
 							return fmt.Errorf("expected no more than %d concurrent goroutine", maxConcurrent)
 						}
 						time.Sleep(time.Millisecond)
-						currentConcurrent.Add(-1)
+						atomic.AddInt64(&currentConcurrent, -1)
 						return nil
 					})
 				}
 				require.NoError(t, p.Wait())
-				require.Equal(t, int64(0), currentConcurrent.Load())
+				require.Equal(t, int64(0), currentConcurrent)
 			})
 		}
 	})

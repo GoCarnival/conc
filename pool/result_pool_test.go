@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sourcegraph/conc/pool"
+	"github.com/GoCarnivalConc/conc/pool"
 
 	"github.com/stretchr/testify/require"
 )
@@ -89,27 +89,27 @@ func TestResultGroup(t *testing.T) {
 			t.Run(strconv.Itoa(maxGoroutines), func(t *testing.T) {
 				g := pool.NewWithResults[int]().WithMaxGoroutines(maxGoroutines)
 
-				var currentConcurrent atomic.Int64
-				var errCount atomic.Int64
+				var currentConcurrent int64
+				var errCount int64
 				taskCount := maxGoroutines * 10
 				expected := make([]int, taskCount)
 				for i := 0; i < taskCount; i++ {
 					i := i
 					expected[i] = i
 					g.Go(func() int {
-						cur := currentConcurrent.Add(1)
+						cur := atomic.AddInt64(&currentConcurrent, 1)
 						if cur > int64(maxGoroutines) {
-							errCount.Add(1)
+							atomic.AddInt64(&errCount, 1)
 						}
 						time.Sleep(time.Millisecond)
-						currentConcurrent.Add(-1)
+						atomic.AddInt64(&currentConcurrent, -1)
 						return i
 					})
 				}
 				res := g.Wait()
 				require.Equal(t, expected, res)
-				require.Equal(t, int64(0), errCount.Load())
-				require.Equal(t, int64(0), currentConcurrent.Load())
+				require.Equal(t, int64(0), errCount)
+				require.Equal(t, int64(0), currentConcurrent)
 			})
 		}
 	})

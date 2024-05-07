@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/sourcegraph/conc/iter"
+	"github.com/GoCarnivalConc/conc/iter"
 
 	"github.com/stretchr/testify/require"
 )
@@ -52,10 +52,10 @@ func TestIterator(t *testing.T) {
 		tasks := make([]int, wantConcurrency)
 		iterator := iter.Iterator[int]{MaxGoroutines: wantConcurrency}
 
-		var concurrentTasks atomic.Int64
+		var concurrentTasks int64
 		iterator.ForEach(tasks, func(t *int) {
-			n := concurrentTasks.Add(1)
-			defer concurrentTasks.Add(-1)
+			n := atomic.AddInt64(&concurrentTasks, 1)
+			defer atomic.AddInt64(&concurrentTasks, -1)
 
 			if int(n) == wantConcurrency {
 				// All our tasks are running concurrently.
