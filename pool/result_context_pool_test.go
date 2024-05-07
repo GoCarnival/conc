@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sourcegraph/conc/pool"
+	"github.com/GoCarnivalConc/conc/pool"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -123,22 +123,22 @@ func TestResultContextPool(t *testing.T) {
 		p := pool.NewWithResults[int]().
 			WithContext(context.Background()).
 			WithCancelOnError()
-		var cancelledTasks atomic.Int64
+		var cancelledTasks int64
 		p.Go(func(ctx context.Context) (int, error) {
 			<-ctx.Done()
-			cancelledTasks.Add(1)
+			atomic.AddInt64(&cancelledTasks, 1)
 			return 0, ctx.Err()
 		})
 		p.Go(func(ctx context.Context) (int, error) {
 			<-ctx.Done()
-			cancelledTasks.Add(1)
+			atomic.AddInt64(&cancelledTasks, 1)
 			return 0, ctx.Err()
 		})
 		p.Go(func(ctx context.Context) (int, error) {
 			panic("abort!")
 		})
 		assert.Panics(t, func() { _, _ = p.Wait() })
-		assert.EqualValues(t, 2, cancelledTasks.Load())
+		assert.EqualValues(t, 2, cancelledTasks)
 	})
 
 	t.Run("no WithCancelOnError", func(t *testing.T) {
@@ -205,26 +205,26 @@ func TestResultContextPool(t *testing.T) {
 				ctx := context.Background()
 				g := pool.NewWithResults[int]().WithContext(ctx).WithMaxGoroutines(maxConcurrency)
 
-				var currentConcurrent atomic.Int64
+				var currentConcurrent int64
 				taskCount := maxConcurrency * 10
 				expected := make([]int, taskCount)
 				for i := 0; i < taskCount; i++ {
 					i := i
 					expected[i] = i
 					g.Go(func(context.Context) (int, error) {
-						cur := currentConcurrent.Add(1)
+						cur := atomic.AddInt64(&currentConcurrent, 1)
 						if cur > int64(maxConcurrency) {
 							return 0, fmt.Errorf("expected no more than %d concurrent goroutines", maxConcurrency)
 						}
 						time.Sleep(time.Millisecond)
-						currentConcurrent.Add(-1)
+						atomic.AddInt64(&currentConcurrent, -1)
 						return i, nil
 					})
 				}
 				res, err := g.Wait()
 				require.Equal(t, expected, res)
 				require.NoError(t, err)
-				require.Equal(t, int64(0), currentConcurrent.Load())
+				require.Equal(t, int64(0), currentConcurrent)
 			})
 		}
 	})

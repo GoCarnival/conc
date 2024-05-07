@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sourcegraph/conc/pool"
+	"github.com/GoCarnivalConc/conc/pool"
 
 	"github.com/stretchr/testify/require"
 )
@@ -110,23 +110,23 @@ func TestResultErrorPool(t *testing.T) {
 				t.Parallel()
 				g := pool.NewWithResults[int]().WithErrors().WithMaxGoroutines(maxConcurrency)
 
-				var currentConcurrent atomic.Int64
+				var currentConcurrent int64
 				taskCount := maxConcurrency * 10
 				for i := 0; i < taskCount; i++ {
 					g.Go(func() (int, error) {
-						cur := currentConcurrent.Add(1)
+						cur := atomic.AddInt64(&currentConcurrent, 1)
 						if cur > int64(maxConcurrency) {
 							return 0, fmt.Errorf("expected no more than %d concurrent goroutine", maxConcurrency)
 						}
 						time.Sleep(time.Millisecond)
-						currentConcurrent.Add(-1)
+						atomic.AddInt64(&currentConcurrent, -1)
 						return 0, nil
 					})
 				}
 				res, err := g.Wait()
 				require.Len(t, res, taskCount)
 				require.NoError(t, err)
-				require.Equal(t, int64(0), currentConcurrent.Load())
+				require.Equal(t, int64(0), currentConcurrent)
 			})
 		}
 	})

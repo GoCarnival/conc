@@ -4,9 +4,9 @@ package stream
 import (
 	"sync"
 
-	"github.com/sourcegraph/conc"
-	"github.com/sourcegraph/conc/panics"
-	"github.com/sourcegraph/conc/pool"
+	"github.com/GoCarnivalConc/conc"
+	"github.com/GoCarnivalConc/conc/panics"
+	"github.com/GoCarnivalConc/conc/pool"
 )
 
 // New creates a new Stream with default settings.

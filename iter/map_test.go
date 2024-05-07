@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/sourcegraph/conc/iter"
+	"github.com/GoCarnivalConc/conc/iter"
 
 	"github.com/stretchr/testify/require"
 )

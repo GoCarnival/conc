@@ -13,7 +13,7 @@ import (
 // get the value of the first panic (if any) with Recovered(), or you can just
 // propagate the panic (re-panic) with Repanic().
 type Catcher struct {
-	recovered atomic.Pointer[Recovered]
+	recovered atomic.Value
 }
 
 // Try executes f, catching any panic it might spawn. It is safe
@@ -42,7 +42,8 @@ func (p *Catcher) Repanic() {
 // Recovered returns the value of the first panic caught by Try, or nil if
 // no calls to Try panicked.
 func (p *Catcher) Recovered() *Recovered {
-	return p.recovered.Load()
+	recovered := p.recovered.Load().(Recovered)
+	return &recovered
 }
 
 // NewRecovered creates a panics.Recovered from a panic value and a collected
